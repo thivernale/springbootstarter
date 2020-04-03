@@ -1,6 +1,5 @@
 /.project
 /.settings/
-/derby.log
 /.attach_pid*
 
 /target/*
@@ -9,5 +8,6 @@
 *.war
 *.ear
 *.logs
+*.log
 *.iml
 .eclipse

@@ -52,9 +52,11 @@ public class TopicService {
             topicRepository.findById(id).get();
     }
 
-    public void addTopic(Topic topic) {
+    public String addTopic(Topic topic) {
         // topics.add(topic);
-        topicRepository.save(topic);
+        topic = topicRepository.save(topic);
+
+        return topic.getId();
     }
 
     public void updateTopic(String id, Topic topic) {

@@ -2,10 +2,14 @@ package org.thivernale.springbootstarter.topic;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Topic {
     @Id
+    @NotEmpty
+    @Size(min = 1, max = 128)
     private String id;
     private String name;
     private String description;

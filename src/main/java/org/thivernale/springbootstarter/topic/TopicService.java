@@ -2,9 +2,11 @@ package org.thivernale.springbootstarter.topic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * We want a business service to be a singleton: when the application starts, an
@@ -47,9 +49,14 @@ public class TopicService {
     }
 
     public Topic getTopic(String id) {
+        Optional<Topic> requestedTopic = topicRepository.findById(id);
+
+        if (requestedTopic.isEmpty()) {
+            throw new TopicNotFoundException(String.format("Topic with id: '%s' not found.", id));
+        }
         return
             // topics.stream().filter(t -> t.getId().equals(id)).findFirst().get();
-            topicRepository.findById(id).get();
+            requestedTopic.get();
     }
 
     public String addTopic(Topic topic) {
@@ -59,7 +66,9 @@ public class TopicService {
         return topic.getId();
     }
 
-    public void updateTopic(String id, Topic topic) {
+    // make use of Hibernate's dirty-checking mechanism
+    @Transactional
+    public Topic updateTopic(String id, Topic topic) {
         //        for (int i = 0; i < topics.size(); i++) {
         //            Topic t = topics.get(i);
         //            if (t.getId().equals(id)) {
@@ -67,7 +76,16 @@ public class TopicService {
         //                return;
         //            }
         //        }
-        topicRepository.save(topic);
+
+        //return topicRepository.save(topic);
+
+        Topic topicDb = getTopic(id);
+
+        topicDb.setName(topic.getName());
+        topicDb.setDescription(topic.getDescription());
+
+        // there is no "save" method explicitly called, it is done by Hibernate
+        return topicDb;
     }
 
     public void deleteTopic(String id) {

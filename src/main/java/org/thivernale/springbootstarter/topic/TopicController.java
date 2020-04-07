@@ -36,8 +36,8 @@ public class TopicController {
      * @return
      */
     @RequestMapping("/topics")
-    public List<Topic> getTopics() {
-        return topicService.getTopics();
+    public ResponseEntity<List<Topic>> getTopics() {
+        return ResponseEntity.ok(topicService.getTopics());
     }
 
     /**
@@ -48,8 +48,8 @@ public class TopicController {
      * @return
      */
     @RequestMapping("/topics/{id}")
-    public Topic getTopic(@PathVariable String id) {
-        return topicService.getTopic(id);
+    public ResponseEntity<Topic> getTopic(@PathVariable("id") String id) {
+        return ResponseEntity.ok(topicService.getTopic(id));
     }
 
     /**
@@ -71,12 +71,13 @@ public class TopicController {
     }
 
     @RequestMapping(method = {RequestMethod.PUT}, path = "/topics/{id}")
-    public void updateTopic(@RequestBody Topic topic, @PathVariable String id) {
-        topicService.updateTopic(id, topic);
+    public ResponseEntity<Topic> updateTopic(@Valid @RequestBody Topic topic, @PathVariable("id") String id) {
+        return ResponseEntity.ok(topicService.updateTopic(id, topic));
     }
 
     @RequestMapping(method = {RequestMethod.DELETE}, path = "/topics/{id}")
-    public void deleteTopic(@PathVariable String id) {
+    public ResponseEntity<Void> deleteTopic(@PathVariable String id) {
         topicService.deleteTopic(id);
+        return ResponseEntity.ok().build();
     }
 }

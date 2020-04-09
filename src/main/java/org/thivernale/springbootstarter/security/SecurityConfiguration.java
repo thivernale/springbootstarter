@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -43,7 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // configure JDBC authentication
         // when the application starts up, these instructions tell Spring
         // Security to populate the database with certain schema and data
-        auth.jdbcAuthentication()
+        /*auth.jdbcAuthentication()
         .dataSource(dataSource)
         .withDefaultSchema()
         .withUser(
@@ -53,7 +52,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .withUser(
             User.withUsername("admin")
             .password("pass")
-            .roles("ADMIN"));
+            .roles("ADMIN"));*/
+
+        auth.jdbcAuthentication()
+        .dataSource(dataSource)
+        //.usersByUsernameQuery("...")
+        //.authoritiesByUsernameQuery("...")
+        ;
     }
 
     /**

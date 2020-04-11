@@ -1,6 +1,7 @@
 -- https://docs.spring.io/spring-security/site/docs/current/reference/html5/#appendix-schema
 
 create table users(
+    id int not null auto_increment,
     username varchar_ignorecase(50) not null primary key,
     password varchar_ignorecase(50) not null,
     enabled boolean not null

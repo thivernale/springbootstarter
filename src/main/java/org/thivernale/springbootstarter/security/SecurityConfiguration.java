@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
@@ -15,6 +16,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * @see https://docs.spring.io/spring-security/site/docs/current/reference/html5
+ */
 /**
  * Tell Spring that this is a web security configuration
  */
@@ -85,12 +89,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * Configure JDBC authentication with database schema and users defined in files:
+     * Configure JDBC authentication with database schema and users defined in *.sql files:
      * @param auth
      * @throws Exception
      */
     private void configureJdbcAuthenticationH2Files(AuthenticationManagerBuilder auth) throws Exception {
-        //
         auth.jdbcAuthentication()
         .dataSource(dataSource)
         //.usersByUsernameQuery("...")
@@ -105,7 +108,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      * @throws Exception
      */
     private void configureJpaAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-        //
         auth.userDetailsService(userDetailsService);
     }
 
@@ -133,7 +135,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // specify that URLs are allowed by everyone
         .antMatchers("/"/*, "/static/css", "/static/js"*/).permitAll()
         .and()
-        .formLogin()
-        ;
+        .formLogin();
+
+        //        http.headers().frameOptions().disable()
+        //        .and().csrf().disable();
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/h2-console/**");
     }
 }

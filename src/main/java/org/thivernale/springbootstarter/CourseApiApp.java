@@ -2,6 +2,10 @@ package org.thivernale.springbootstarter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.thivernale.springbootstarter.course.CourseRepository;
+import org.thivernale.springbootstarter.security.UserRepository;
+import org.thivernale.springbootstarter.topic.TopicRepository;
 
 /**
  * This is where the application will be bootstrapped.
@@ -15,9 +19,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Annotation tells Spring Boot that this is the starting point for the
  * application
- *
  */
 @SpringBootApplication
+/**
+ * Enable JPA repositories
+ */
+@EnableJpaRepositories(basePackageClasses = {UserRepository.class, TopicRepository.class, CourseRepository.class})
 public class CourseApiApp {
 
     public static void main(String[] args) {

@@ -1,6 +1,9 @@
-INSERT INTO users (username, password, enabled) VALUES
-('user', 'pass', true),
-('admin', 'pass', true);
+INSERT INTO users (id, username, password, enabled) VALUES
+(NULL, 'user0', 'pass', true);
+
+INSERT INTO users (id, username, password, enabled) VALUES
+(NULL, 'user', 'pass', true),
+(NULL, 'admin', 'pass', true);
 
 INSERT INTO authorities (username, authority) VALUES
 ('user', 'ROLE_USER'),

@@ -5,18 +5,26 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "users")
+@SecondaryTable(name = "authorities", pkJoinColumns=@PrimaryKeyJoinColumn(name="username"))
 public class User {
-    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @NotNull
     private int id;
+    @Id
+    @PrimaryKeyJoinColumn()
     @Column(name = "username")
     private String userName;
     private String password;
+    @Column(name = "enabled")
     private boolean active;
+    @Column(table = "authorities", name = "authority")
     private String roles;
 
     public int getId() {

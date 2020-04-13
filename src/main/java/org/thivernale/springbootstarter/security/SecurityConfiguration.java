@@ -1,74 +1,54 @@
 package org.thivernale.springbootstarter.security;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
+ * @see https://spring.io/guides/gs/authenticating-ldap/
+ */
+/**
  * Tell Spring that this is a web security configuration
- *
  */
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-	@Autowired
-	DataSource dataSource;
-	
-	/**
-	 * Configure Authentication mechanism 
-	 * Set your Configuration on the auth object:
-	 */
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		
-		// configure as in-memory authentication with user, password and role
-		auth.inMemoryAuthentication()
-			.withUser("user")
-			.password("pass")
-			.roles("USER")
-			.and()
-			.withUser("foo")
-			.password("bar")
-			.roles("ADMIN")
-			;
-		
-		// configure JDBC authentication
-		auth.jdbcAuthentication()
-			.dataSource(dataSource);
-	}
 
-	/**
-	 * Spring Security requires a password encoder
-	 * @return a Spring Bean of type PasswordEncoder
-	 */
-	@Bean
-	@SuppressWarnings(value = { "deprecation" })
-	public PasswordEncoder getPasswordEncoder() {
-		// a password encoder which does nothing
-		// not recommended for real applications, but this is a tutorial
-		return NoOpPasswordEncoder.getInstance();
-	}
-	
-	/**
-	 * Override Authorization configuration
-	 */
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-			//.antMatchers("/**").hasRole("ADMIN")
-			// start from most restrictive rule
-			.antMatchers("/admin").hasRole("ADMIN")
-			.antMatchers("/user").hasAnyRole("ADMIN", "USER")
-			// specify that URLs are allowed by everyone
-			.antMatchers("/"/*, "/static/css", "/static/js"*/).permitAll()
-			.and()
-			.formLogin()
-			;
-	}
+    /**
+     * Configure Authentication mechanism
+     * Set your Configuration on the auth object:
+     */
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // configure LDAP authentication
+        auth.ldapAuthentication()
+        .userDnPatterns("uid={0},ou=people")
+        .groupSearchBase("ou=groups")
+        .contextSource()
+        .url("ldap://localhost:8389/dc=springframework,dc=org")
+        .and()
+        .passwordCompare()
+        .passwordEncoder(new BCryptPasswordEncoder())
+        .passwordAttribute("userPassword")
+        ;
+    }
+
+    /**
+     * Override Authorization configuration
+     */
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+        .anyRequest().fullyAuthenticated()
+        .and()
+        .formLogin()
+        ;
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/h2-console/**");
+    }
 }

@@ -19,34 +19,34 @@ public class HelloController {
     public String sayHi() {
         return "Hi";
     }
-    
+
     /**
      * Authorization Use Case 1:
-     * 
+     *
      * @return
      */
     @GetMapping("/")
     public String home() {
-    	return ("<h1>Welcome</h1>");
+        return ("<h1>Welcome</h1>");
     }
-    
+
     /**
      * Authorization Use Case 2:
-     * 
+     *
      * @return
      */
     @GetMapping("/user")
     public String user() {
-    	return ("<h1>Welcome User</h1>");
+        return ("<h1>Welcome User</h1>");
     }
-    
+
     /**
      * Authorization Use Case 3:
-     * 
+     *
      * @return
      */
     @GetMapping("/admin")
     public String admin() {
-    	return ("<h1>Welcome Admin</h1>");
+        return ("<h1>Welcome Admin</h1>");
     }
 }

@@ -1,10 +1,15 @@
 package org.thivernale.springbootstarter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.thivernale.springbootstarter.course.CourseRepository;
 import org.thivernale.springbootstarter.security.UserRepository;
+import org.thivernale.springbootstarter.security.models.User;
 import org.thivernale.springbootstarter.topic.TopicRepository;
 
 /**
@@ -27,6 +32,8 @@ import org.thivernale.springbootstarter.topic.TopicRepository;
 @EnableJpaRepositories(basePackageClasses = {UserRepository.class, TopicRepository.class, CourseRepository.class})
 public class CourseApiApp {
 
+    private static final Logger log = LoggerFactory.getLogger(CourseApiApp.class);
+
     public static void main(String[] args) {
         // Spring Boot utility - execute starting method
         // - sets up default configuration
@@ -36,4 +43,18 @@ public class CourseApiApp {
         SpringApplication.run(CourseApiApp.class, args);
     }
 
+    /**
+     * @see https://spring.io/guides/gs/accessing-data-jpa/
+     * @param userRepository
+     * @return
+     */
+    @Bean
+    public CommandLineRunner demo(UserRepository userRepository) {
+        return (args) -> {
+            log.info("Running...");
+            for (User u : userRepository.findAll()) {
+                log.info(String.format("User %d %s %s found!", u.getId(), u.getUserName(), u.getRoles()));
+            }
+        };
+    }
 }

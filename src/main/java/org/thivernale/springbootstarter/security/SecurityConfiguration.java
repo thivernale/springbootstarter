@@ -134,16 +134,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers("/admin").hasRole("ADMIN")
         .antMatchers("/user").hasAnyRole("ADMIN", "USER")
         // specify that URLs are allowed by everyone
-        .antMatchers("/"/*, "/static/css", "/static/js"*/).permitAll()
+        .antMatchers("/", "/authenticate" /*, "/static/css", "/static/js"*/).permitAll()
+        .anyRequest().authenticated()
         .and()
-        .formLogin();
+        .formLogin()
 
         //        http.headers().frameOptions().disable()
-        //        .and().csrf().disable();
+        .and().csrf().disable();
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/h2-console/**");
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

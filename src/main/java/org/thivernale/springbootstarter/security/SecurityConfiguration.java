@@ -11,10 +11,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.thivernale.springbootstarter.jwt.filters.JwtRequestFilter;
 
 /**
  * @see https://docs.spring.io/spring-security/site/docs/current/reference/html5
@@ -30,6 +33,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     UserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
 
     /**
      * Configure Authentication mechanism
@@ -108,7 +114,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      * @throws Exception
      */
     private void configureJpaAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-        //TODO URHERE
         auth.userDetailsService(userDetailsService);
     }
 
@@ -136,11 +141,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // specify that URLs are allowed by everyone
         .antMatchers("/", "/authenticate" /*, "/static/css", "/static/js"*/).permitAll()
         .anyRequest().authenticated()
-        .and()
-        .formLogin()
+        //.and()
+        //.formLogin()
 
         //        http.headers().frameOptions().disable()
         .and().csrf().disable();
+
+        // do not create session
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        // apply filter processing JWT before UsernamePasswordAuthenticationFilter
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

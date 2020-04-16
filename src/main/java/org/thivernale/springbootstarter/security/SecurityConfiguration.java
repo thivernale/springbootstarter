@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -26,6 +27,7 @@ import org.thivernale.springbootstarter.jwt.filters.JwtRequestFilter;
  * Tell Spring that this is a web security configuration
  */
 @EnableWebSecurity
+@Order(value = 101)
 @SuppressWarnings(value = {"deprecation", "unused"})
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired

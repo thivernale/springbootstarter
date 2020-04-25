@@ -8,51 +8,70 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.github.javafaker.Faker;
 
 @Embeddable
-public class Address extends com.github.javafaker.Address {
-
-    @Transient
-    @Autowired
-    protected Faker faker;
+public class Address extends com.github.javafaker.Address implements Cloneable {
     private String street;
     private String city;
     private String state;
     private String zipCode;
+    @Transient
+    private User user;
 
-    protected Address(Faker faker) {
+    @Transient
+    @Autowired
+    public Faker getFaker() {
+        return null;
+    }
+
+    public Address() {
+        super(null);
+    }
+
+    public Address(Faker faker) {
         super(faker);
-        // TODO Auto-generated constructor stub
     }
 
     public String getStreet() {
-        return streetAddress();
+        return street;
     }
 
     public void setStreet(String street) {
-        this.street = street;
+        this.street = street != null ? street : streetAddressNumber() + " " + streetAddress();
     }
 
     public String getCity() {
-        return city != null ? city : city();
+        return city;
     }
 
     public void setCity(String city) {
-        this.city = city;
+        this.city = city != null ? city : city();
     }
 
     public String getState() {
-        return stateAbbr();
+        return state;
     }
 
     public void setState(String state) {
-        this.state = state;
+        this.state = state != null ? state : stateAbbr();
     }
 
     public String getZipCode() {
-        return zipCode();
+        return zipCode;
     }
 
     public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
+        this.zipCode = zipCode != null ? zipCode : zipCode();
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public Address clone() throws CloneNotSupportedException {
+        return (Address)super.clone();
+    }
 }

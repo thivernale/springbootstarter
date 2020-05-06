@@ -1,13 +1,18 @@
 package org.thivernale.springbootstarter.security.models;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.javafaker.Faker;
 
 @Embeddable
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Address extends com.github.javafaker.Address implements Cloneable {
     private String street;
     private String city;

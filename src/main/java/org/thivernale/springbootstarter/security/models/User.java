@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -22,6 +23,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
@@ -32,16 +37,28 @@ import javax.persistence.Transient;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionId;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 
 @Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@NamedQueries({
+    @NamedQuery(name = "User.byId", query = "from User where id = ?0")
+})
+@NamedNativeQueries({
+    @NamedNativeQuery(name= "User.byName", query = "SELECT * FROM users WHERE username = ?", resultClass = User.class)
+})
 @Table(name = "users")
 @SecondaryTable(name = "authorities", pkJoinColumns = @PrimaryKeyJoinColumn(name="username"))
 @Transactional()
+@SelectBeforeUpdate()
 public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @NotNull

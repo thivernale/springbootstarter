@@ -23,7 +23,7 @@ public class CourseApiInitializer implements CommandLineRunner {
     private CourseRepository courseRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String ...args) throws Exception {
         Faker faker = new Faker();
 
         List<String> coveredTopics = Arrays.asList(

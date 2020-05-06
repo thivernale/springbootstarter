@@ -1,8 +1,14 @@
 package org.thivernale.springbootstarter.security.models;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Embeddable;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Embeddable
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class UserRole {
     private String authority;
 

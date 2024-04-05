@@ -1,7 +1,5 @@
 package org.thivernale.springbootstarter.security;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,9 +17,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.thivernale.springbootstarter.jwt.filters.JwtRequestFilter;
 
+import javax.sql.DataSource;
+
 /**
  * @see https://docs.spring.io/spring-security/site/docs/current/reference/html5
  */
+
 /**
  * Tell Spring that this is a web security configuration
  */
@@ -40,9 +41,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     /**
      * Configure Authentication mechanism
      * Set your Configuration on the auth object:
-     *
-     * {@link AuthenticationManager} authenticate() -> {@link AuthenticationProvider} authenticate() supports() -> {@link UserDetailsService} loadUserByUsername()
-     *
+     * <p>
+     * {@link AuthenticationManager} authenticate() -> {@link AuthenticationProvider} authenticate() supports() ->
+     * {@link UserDetailsService} loadUserByUsername()
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -58,23 +59,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * Configure as in-memory authentication with user, password and role
+     *
      * @param auth
      * @throws Exception
      */
     private void configureInMemoryAuthentication(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-        .withUser("user")
-        .password("pass")
-        .roles("USER")
-        .and()
-        .withUser("foo")
-        .password("bar")
-        .roles("ADMIN")
+            .withUser("user")
+            .password("pass")
+            .roles("USER")
+            .and()
+            .withUser("foo")
+            .password("bar")
+            .roles("ADMIN")
         ;
     }
 
     /**
      * Configure JDBC authentication with default schema and inline defined used:
+     *
      * @param auth
      * @throws Exception
      */
@@ -82,26 +85,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // when the application starts up, these instructions tell Spring
         // Security to populate the database with certain schema and data
         auth.jdbcAuthentication()
-        .dataSource(dataSource)
-        .withDefaultSchema()
-        .withUser(
-            User.withUsername("user")
-            .password("pass")
-            .roles("USER"))
-        .withUser(
-            User.withUsername("admin")
-            .password("pass")
-            .roles("ADMIN"));
+            .dataSource(dataSource)
+            .withDefaultSchema()
+            .withUser(
+                User.withUsername("user")
+                    .password("pass")
+                    .roles("USER"))
+            .withUser(
+                User.withUsername("admin")
+                    .password("pass")
+                    .roles("ADMIN"));
     }
 
     /**
      * Configure JDBC authentication with database schema and users defined in *.sql files:
+     *
      * @param auth
      * @throws Exception
      */
     private void configureJdbcAuthenticationH2Files(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication()
-        .dataSource(dataSource)
+            .dataSource(dataSource)
         //.usersByUsernameQuery("...")
         //.authoritiesByUsernameQuery("...")
         ;
@@ -110,6 +114,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     /**
      * Configure db authentication: connect to MySQL using JPA and get data
      * from database.
+     *
      * @param auth
      * @throws Exception
      */
@@ -119,6 +124,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * Spring Security requires a password encoder
+     *
      * @return a Spring Bean of type PasswordEncoder
      */
     @Bean
@@ -134,28 +140,36 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-        //.antMatchers("/**").hasRole("ADMIN")
-        // start from most restrictive rule
-        .antMatchers("/admin").hasRole("ADMIN")
-        .antMatchers("/user").hasAnyRole("ADMIN", "USER")
-        // specify that URLs are allowed by everyone
-        .antMatchers("/", "/authenticate" /*, "/static/css", "/static/js"*/).permitAll()
-        .anyRequest().authenticated()
-        //.and()
-        //.formLogin()
+            //.antMatchers("/**").hasRole("ADMIN")
+            // start from most restrictive rule
+            .antMatchers("/admin")
+            .hasRole("ADMIN")
+            .antMatchers("/user")
+            .hasAnyRole("ADMIN", "USER")
+            // specify that URLs are allowed by everyone
+            .antMatchers("/", "/authenticate" /*, "/static/css", "/static/js"*/)
+            .permitAll()
+            .anyRequest()
+            .authenticated()
+            //.and()
+            //.formLogin()
 
-        //        http.headers().frameOptions().disable()
-        .and().csrf().disable();
+            //        http.headers().frameOptions().disable()
+            .and()
+            .csrf()
+            .disable();
 
         // do not create session
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // apply filter processing JWT before UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/h2-console/**");
+        web.ignoring()
+            .antMatchers("/h2-console/**");
     }
 
     @Bean

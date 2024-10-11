@@ -40,7 +40,7 @@ jobs:
       with:
         image: ghcr.io/${{github.repository}}
         registry: ghcr.io
-        username: ${{ gitgithub.actor }}
+        username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         
 #      run: |

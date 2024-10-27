@@ -18,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TopicService {
     /**
      * When Spring creates an instance of the TopicService it is going to inject
-     * an
-     * instance of the TopicRepository.
+     * an instance of the TopicRepository.
      */
     @Autowired
     private TopicRepository topicRepository;

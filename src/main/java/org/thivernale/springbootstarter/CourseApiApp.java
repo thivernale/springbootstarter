@@ -1,19 +1,6 @@
 package org.thivernale.springbootstarter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityManagerFactory;
-
+import com.github.javafaker.Faker;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -36,7 +23,9 @@ import org.thivernale.springbootstarter.security.models.Employee;
 import org.thivernale.springbootstarter.security.models.User;
 import org.thivernale.springbootstarter.security.models.UserRole;
 
-import com.github.javafaker.Faker;
+import javax.persistence.EntityManagerFactory;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This is where the application will be bootstrapped.
@@ -58,13 +47,12 @@ import com.github.javafaker.Faker;
 @EnableJpaRepositories(
     //basePackageClasses = {UserRepository.class, TopicRepository.class, CourseRepository.class},
     basePackages = "org.thivernale.springbootstarter"
-    )
+)
 @EnableTransactionManagement()
 public class CourseApiApp {
+    private static final Logger log = LoggerFactory.getLogger(CourseApiApp.class);
     @Autowired
     EntityManagerFactory entityManagerFactory;
-
-    private static final Logger log = LoggerFactory.getLogger(CourseApiApp.class);
 
     public static void main(String[] args) {
         // Spring Boot utility - execute starting method
@@ -76,10 +64,10 @@ public class CourseApiApp {
     }
 
     /**
-     * @see https://spring.io/guides/gs/accessing-data-jpa/
      * @param userRepository
      * @param employeeRepository
      * @return
+     * @see https://spring.io/guides/gs/accessing-data-jpa/
      */
     @Bean
     public CommandLineRunner demo(UserRepository userRepository, EmployeeRepository employeeRepository) {
@@ -107,7 +95,7 @@ public class CourseApiApp {
                 addr2.setState(addr2.getState());
                 addr2.setZipCode(addr2.getZipCode());
 
-                listOfAddresses.addAll(Arrays.asList(new Address[]{addr, addr2}));
+                listOfAddresses.addAll(Arrays.asList(addr, addr2));
                 u.getListOfAddresses();
                 // set into list
                 u.setListOfAddresses(listOfAddresses);
@@ -122,13 +110,15 @@ public class CourseApiApp {
                 if (userRoles.size() == 0 || u.getRoles() == null) {
                     String[] roleNames = {"ROLE_USER", "ROLE_DEFAULT", "ROLE_GUEST"};
                     u.setRoles(String.join(",", roleNames));
-                    Arrays.asList(roleNames).forEach(roleName -> userRoles.add(new UserRole(roleName)));
+                    Arrays.asList(roleNames)
+                        .forEach(roleName -> userRoles.add(new UserRole(roleName)));
                 }
-                System.out.println(u.getUserRoles().size());
+                System.out.println(u.getUserRoles()
+                    .size());
 
                 System.out.println("Employee:");
                 Optional<Employee> oldEmployee = Optional.ofNullable(u.getEmployee());
-                System.out.println(oldEmployee.toString());
+                System.out.println(oldEmployee);
 
                 Employee employee = new Employee();
                 employee.setPosition("Customer Support " + u.getId());
@@ -141,19 +131,28 @@ public class CourseApiApp {
                 userRepository.save(u);
                 /*employeeRepository.save(employee);*/
                 if (!oldEmployee.isEmpty()) {
-                    oldEmployee.get().setUser(null);
+                    oldEmployee.get()
+                        .setUser(null);
                     employeeRepository.delete(oldEmployee.get());
                 }
 
                 log.info(
                     "Addresses:\n" +
-                        String.join("\n", u.getListOfAddresses().stream().map(a -> a.city()).collect(Collectors.toList())) + "\n" +
-                        u.getAddress().city() + "\n" +
-                        u.getOfficeAddress().city() + "\n" +
+                        String.join("\n", u.getListOfAddresses()
+                            .stream()
+                            .map(a -> a.city())
+                            .collect(Collectors.toList())) + "\n" +
+                        u.getAddress()
+                            .city() + "\n" +
+                        u.getOfficeAddress()
+                            .city() + "\n" +
                         "Roles:\n" +
-                        String.join("\n", u.getUserRoles().stream().map(a -> a.getAuthority()).collect(Collectors.toList())) +
+                        String.join("\n", u.getUserRoles()
+                            .stream()
+                            .map(a -> a.getAuthority())
+                            .collect(Collectors.toList())) +
                         "\n"
-                    );
+                );
             }
         };
     }
@@ -172,7 +171,8 @@ public class CourseApiApp {
         query.setParameter(0, 2);
 
         // apply pagination
-        query.setFirstResult(0).setMaxResults(1);
+        query.setFirstResult(0)
+            .setMaxResults(1);
         List<User> users = query.list();
 
         Query<String> queryName = session.createQuery("select userName from User", String.class);
@@ -201,7 +201,8 @@ public class CourseApiApp {
         User exampleUser = new User();
         exampleUser.setActive(true);
         exampleUser.setUserName("random user name");
-        Example example = Example.create(exampleUser).excludeProperty("userName");
+        Example example = Example.create(exampleUser)
+            .excludeProperty("userName");
         criteria.add(example);
 
         //users = criteria.list();
@@ -209,7 +210,8 @@ public class CourseApiApp {
         User adminUser = session.get(User.class, "admin");
         System.out.println(adminUser.getId());
 
-        session.getTransaction().commit();
+        session.getTransaction()
+            .commit();
         session.close();
 
         System.out.println("Printing after session is closed:");
@@ -231,17 +233,10 @@ public class CourseApiApp {
         queryName.setCacheable(true);
         userNames = queryName.list();
 
-        session.getTransaction().commit();
+        session.getTransaction()
+            .commit();
         session.close();
 
         return true;
-    }
-
-    public void functionTest() {
-        System.out.printf("first line%nsecond line%n");
-        Function<Integer, ?> doSomething = a -> {
-            return a;
-        };
-        Consumer<Integer> consumeThis = a -> {};
     }
 }

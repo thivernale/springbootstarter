@@ -1,19 +1,14 @@
 package org.thivernale.springbootstarter.course;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.thivernale.springbootstarter.topic.Topic;
+
+import java.util.List;
 
 /**
  * The web layer of a Spring application leverages Spring MVC.
  * It lets you build server-side code which maps to URLs and provides responses.
- *
  */
 @RestController
 public class CourseController {
@@ -23,10 +18,12 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
+
     /**
      * Maps to a GET request by default.
      * The result is going to be converted automatically to JSON
      * because of the @RestController annotation.
+     *
      * @return
      */
     @RequestMapping("/topics/{id}/courses")
@@ -38,6 +35,7 @@ public class CourseController {
      * Specify a variable path using curly braces, specify that value should be
      * passed as parameter using @PathVariable annotation for parameter.
      * Pass parameter if names do not match.
+     *
      * @param id
      * @return
      */
@@ -51,6 +49,7 @@ public class CourseController {
      * Specify method in annotation, use RequestMethod enum.
      * Pick the Course instance from the Request body and convert it to an
      * object of that class.
+     *
      * @param topicId
      */
     @RequestMapping(method = {RequestMethod.POST}, path = "/topics/{topicId}/courses")
@@ -66,7 +65,7 @@ public class CourseController {
     }
 
     @RequestMapping(method = {RequestMethod.DELETE}, path = "/topics/{topicId}/courses/{id}")
-    public void deleteCourse(@PathVariable String id) {
+    public void deleteCourse(@PathVariable String id, @PathVariable String topicId) {
         courseService.deleteCourse(id);
     }
 }

@@ -11,3 +11,5 @@
 *.log
 *.iml
 .eclipse
+/.dbeaver/
+/.idea/

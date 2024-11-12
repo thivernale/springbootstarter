@@ -36,10 +36,6 @@ import java.util.stream.Collectors;
  * servlet container.
  */
 
-/**
- * Annotation tells Spring Boot that this is the starting point for the
- * application
- */
 @SpringBootApplication
 /**
  * Enable JPA repositories
@@ -64,10 +60,7 @@ public class CourseApiApp {
     }
 
     /**
-     * @param userRepository
-     * @param employeeRepository
-     * @return
-     * @see https://spring.io/guides/gs/accessing-data-jpa/
+     * @see <a href="https://spring.io/guides/gs/accessing-data-jpa/">Accessing Data JPA Guide</a>
      */
     @Bean
     public CommandLineRunner demo(UserRepository userRepository, EmployeeRepository employeeRepository) {
@@ -105,9 +98,9 @@ public class CourseApiApp {
 
                 Collection<UserRole> userRoles = u.getUserRoles();
                 if (userRoles == null) {
-                    u.setUserRoles(new ArrayList<UserRole>());
+                    u.setUserRoles(new ArrayList<>());
                 }
-                if (userRoles.size() == 0 || u.getRoles() == null) {
+                if (userRoles.isEmpty() || u.getRoles() == null) {
                     String[] roleNames = {"ROLE_USER", "ROLE_DEFAULT", "ROLE_GUEST"};
                     u.setRoles(String.join(",", roleNames));
                     Arrays.asList(roleNames)
@@ -130,7 +123,7 @@ public class CourseApiApp {
 
                 userRepository.save(u);
                 /*employeeRepository.save(employee);*/
-                if (!oldEmployee.isEmpty()) {
+                if (oldEmployee.isPresent()) {
                     oldEmployee.get()
                         .setUser(null);
                     employeeRepository.delete(oldEmployee.get());
@@ -138,19 +131,19 @@ public class CourseApiApp {
 
                 log.info(
                     "Addresses:\n" +
-                        String.join("\n", u.getListOfAddresses()
+                        u.getListOfAddresses()
                             .stream()
-                            .map(a -> a.city())
-                            .collect(Collectors.toList())) + "\n" +
+                            .map(com.github.javafaker.Address::city)
+                            .collect(Collectors.joining("\n")) + "\n" +
                         u.getAddress()
                             .city() + "\n" +
                         u.getOfficeAddress()
                             .city() + "\n" +
                         "Roles:\n" +
-                        String.join("\n", u.getUserRoles()
+                        u.getUserRoles()
                             .stream()
-                            .map(a -> a.getAuthority())
-                            .collect(Collectors.toList())) +
+                            .map(UserRole::getAuthority)
+                            .collect(Collectors.joining("\n")) +
                         "\n"
                 );
             }
@@ -208,7 +201,7 @@ public class CourseApiApp {
         //users = criteria.list();
 
         User adminUser = session.get(User.class, "admin");
-        System.out.println(adminUser.getId());
+        System.out.println(adminUser != null ? adminUser.getId() : "admin user not found");
 
         session.getTransaction()
             .commit();
@@ -227,7 +220,7 @@ public class CourseApiApp {
 
         // run previous queries again
         adminUser = session.get(User.class, "admin");
-        System.out.println(adminUser.getId());
+        System.out.println(adminUser != null ? adminUser.getId() : "admin user not found");
 
         queryName = session.createQuery("select userName from User", String.class);
         queryName.setCacheable(true);

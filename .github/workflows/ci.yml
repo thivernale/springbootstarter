@@ -38,7 +38,7 @@ jobs:
       run: mvn -B package --file pom.xml
       env:
         SPRING_PROFILES_ACTIVE: test
-        SPRING_JPA_DEFER_DATASOURCE_INITIALIZATION: true
+        SPRING_JPA_DEFERDATASOURCEINITIALIZATION: true
         SPRING_SQL_INIT_MODE: always
         DB_DATABASE: testdb
         DB_USERNAME: root          

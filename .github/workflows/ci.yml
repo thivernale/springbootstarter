@@ -37,6 +37,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
       env:
+        SPRING_PROFILES_ACTIVE: test
         DB_DATABASE: testdb
         DB_USERNAME: root          
         DB_PASSWORD: root       
